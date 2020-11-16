@@ -24,11 +24,12 @@ class RestController extends AbstractController
 
     /**
      * @Route("/teachers", name="addTeacher", methods={"PUT"})
+     * @param Request $request
+     * @return Response
      */
-    public function add_teacher(): Response
+    public function add_teacher(Request $request): Response
     {
         // Get request data
-        $request = Request::createFromGlobals();
         $data = json_decode($request->getContent());
         $name = $data->name;
         $email = $data->email;
@@ -70,12 +71,12 @@ class RestController extends AbstractController
     /**
      * @Route("/teachers/{id}", name="updateTeacher", requirements={"id"="\d+"}, methods={"POST"})
      * @param $id
+     * @param Request $request
      * @return Response
      */
-    public function update_teacher($id): Response
+    public function update_teacher($id, Request $request): Response
     {
         // Get request data
-        $request = Request::createFromGlobals();
         $data = json_decode($request->getContent());
         $name = $data->name;
         $email = $data->email;
@@ -149,11 +150,12 @@ class RestController extends AbstractController
 
     /**
      * @Route("/students", name="addStudent", methods={"PUT"})
+     * @param Request $request
+     * @return Response
      */
-    public function add_student(): Response
+    public function add_student(Request $request): Response
     {
         // Get request data
-        $request = Request::createFromGlobals();
         $data = json_decode($request->getContent());
         $firstName = $data->firstName;
         $lastName = $data->lastName;
@@ -178,12 +180,12 @@ class RestController extends AbstractController
     /**
      * @Route("/students/{id}", name="updateStudent", requirements={"id"="\d+"}, methods={"POST"})
      * @param $id
+     * @param Request $request
      * @return Response
      */
-    public function update_student($id): Response
+    public function update_student($id, Request $request): Response
     {
         // Get request data
-        $request = Request::createFromGlobals();
         $data = json_decode($request->getContent());
         $firstName = $data->firstName;
         $lastName = $data->lastName;
@@ -233,12 +235,12 @@ class RestController extends AbstractController
     /**
      * @Route("/link-teacher/{id}", name="linkTeacher", requirements={"id"="\d+"}, methods={"POST"})
      * @param $id
+     * @param Request $request
      * @return Response
      */
-    public function add_teacher_to_student($id): Response
+    public function add_teacher_to_student($id, Request $request): Response
     {
         // Get request data
-        $request = Request::createFromGlobals();
         $data = json_decode($request->getContent());
         $studentId = $data->studentId;
 
