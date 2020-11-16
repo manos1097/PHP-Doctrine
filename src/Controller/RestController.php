@@ -56,14 +56,15 @@ class RestController extends AbstractController
     public function teacher($id): Response
     {
         // Get teacher by id
-        $entityManager = $this->getDoctrine()->getManager();
-        $teacher = $entityManager->getRepository(Teacher::class)->find($id);
+        $teacher = $this->getDoctrine()->getRepository(Teacher::class)->find($id);
 
         if (!$teacher) {
             return $this->json(["message" => "Teacher with ID: " . $id . " doesnt exist"]);
         }
 
-        return $this->json(["teacher" => $teacher]);
+        $students = $this->getDoctrine()->getRepository(Student::class)->getStudentsByTeacherId($teacher->getId());
+
+        return $this->json(['teacher' => $teacher, 'students' => $students]);
     }
 
     /**
@@ -127,15 +128,14 @@ class RestController extends AbstractController
     public function student($id): Response
     {
         // Get student by id
-        $entityManager = $this->getDoctrine()->getManager();
-        $student = $entityManager->getRepository(Student::class)->find($id);
+        $student = $this->getDoctrine()->getRepository(Student::class)->find($id);
 
         // If not found inform the client that the teacher doesnt exist
         if (!$student) {
             return $this->json(["message" => "Student with ID: " . $id . " doesnt exist"]);
         }
 
-        return $this->json(["student" => $student]);
+        return $this->json(['student' => $student]);
     }
 
     /**
@@ -143,9 +143,7 @@ class RestController extends AbstractController
      */
     public function students(): Response
     {
-        $repository = $this->getDoctrine()->getRepository(Student::class);
-        $students = $repository->findAll();
-
+        $students = $this->getDoctrine()->getRepository(Student::class)->findAll();
         return $this->json(["students" => $students]);
     }
 
@@ -154,8 +152,6 @@ class RestController extends AbstractController
      */
     public function add_student(): Response
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         // Get request data
         $request = Request::createFromGlobals();
         $data = json_decode($request->getContent());
@@ -172,6 +168,7 @@ class RestController extends AbstractController
         $student->setAddress($address);
 
         // Save the new teacher
+        $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($student);
         $entityManager->flush();
 
@@ -238,7 +235,7 @@ class RestController extends AbstractController
      * @param $id
      * @return Response
      */
-    public function add_student_to_teacher($id): Response
+    public function add_teacher_to_student($id): Response
     {
         // Get request data
         $request = Request::createFromGlobals();
@@ -258,7 +255,7 @@ class RestController extends AbstractController
         }
 
         // Link student to teacher and save
-        $teacher->addStudent($student);
+        $student->setTeacher($teacher);
         $entityManager->flush();
 
         return $this->json(["message" => "Success"]);
